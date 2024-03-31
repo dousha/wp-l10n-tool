@@ -1,0 +1,49 @@
+.d-l10n-translate-template {
+    display: none;
+}
+
+.d-l10n-translated {
+    text-decoration: underline dotted;
+    cursor: pointer;
+}
+
+.d-l10n-translated-entity-name {
+    font-weight: bold;
+}
+
+.d-l10n-translated-entity-name-cjk {
+    text-decoration: underline solid;
+}
+
+.d-l10n-translated-manuscript-name-cjk:before {
+    content: '《';
+}
+
+.d-l10n-translated-manuscript-name-cjk:after {
+    content: '》';
+}
+
+.d-l10n-translated-manuscript-name {
+    font-style: italic;
+}
+
+.d-l10n-translated-original:before {
+    content: ' '
+}
+
+.d-l10n-translated-original:after {
+    content: ' '
+}
+
+.d-l10n-color-box {
+    display: inline-block;
+    width: 0.6rem;
+    height: 0.6rem;
+    border: 1px solid #000;
+    margin-left: 0.2rem;
+    margin-right: -0.2rem;
+}
+
+.d-l10n-color {
+    display: inline-block;
+}
