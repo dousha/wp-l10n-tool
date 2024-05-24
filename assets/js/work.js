@@ -36,6 +36,37 @@ function isCjkContext(str) {
     return false
 }
 
+function setupControls() {
+    const translationModeBox = document.getElementById('d-l10n-translation-mode')
+    const annotationModeBox = document.getElementById('d-l10n-annotation-mode')
+
+    if (translationModeBox == null) {
+        console.error('d-l10n-translation-mode not found')
+        return
+    }
+
+    if (annotationModeBox == null) {
+        console.error('d-l10n-annotation-mode not found')
+        return
+    }
+
+    const currentPreferredTranslation = getPreferredTranslation()
+    translationModeBox.value = currentPreferredTranslation
+
+    const currentPreferredAnnotation = getPreferredAnnotation()
+    annotationModeBox.value = currentPreferredAnnotation
+
+    translationModeBox.addEventListener('change', (event) => {
+        changePreferredTranslation(event.target.value)
+        processTranslationBoxes()
+    })
+
+    annotationModeBox.addEventListener('change', (event) => {
+        changePreferredAnnotation(event.target.value)
+        processTranslationBoxes()
+    })
+}
+
 function processColorBoxes() {
     const allColorBoxes = document.querySelectorAll(".d-l10n-color");
 
@@ -80,6 +111,25 @@ function changePreferredTranslation(mode) {
 
     if (localStorage) {
         localStorage.setItem("d-l10n-preferred-translation", mode)
+    }
+}
+
+function getPreferredAnnotation() {
+    if (localStorage) {
+        return localStorage.getItem("d-l10n-preferred-annotation") || 'none'
+    }
+
+    return 'none';
+}
+
+function changePreferredAnnotation(mode) {
+    // can be 'none', 'parenthesis', 'ruby'
+    if (mode !== 'none' && mode !== 'parenthesis' && mode !== 'ruby') {
+        mode = 'none'
+    }
+
+    if (localStorage) {
+        localStorage.setItem("d-l10n-preferred-annotation", mode)
     }
 }
 
@@ -177,6 +227,7 @@ function processTranslationBoxes() {
 }
 
 window.addEventListener("load", () => {
+    setupControls()
     processColorBoxes()
     processTranslationBoxes()
 });

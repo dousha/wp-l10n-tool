@@ -47,3 +47,22 @@
 .d-l10n-color {
     display: inline-block;
 }
+
+.d-l10n-control-box {
+    display: flex;
+    flex-flow: row;
+    border: 1px solid gray;
+    padding: 0.5rem;
+}
+
+.d-l10n-control-box-item {
+    display: inline-flex;
+    margin-right: 1rem;
+    flex-flow: row;
+    align-items: center;
+}
+
+.d-l10n-control-box-item-label {
+    display: block;
+    margin-right: 0.5rem;
+}
