@@ -36,8 +36,39 @@ function isCjkContext(str) {
     return false
 }
 
+function setupControls() {
+    const translationModeBox = document.getElementById('d-l10n-translation-mode')
+    const annotationModeBox = document.getElementById('d-l10n-annotation-mode')
+
+    if (translationModeBox == null) {
+        console.error('d-l10n-translation-mode not found')
+        return
+    }
+
+    if (annotationModeBox == null) {
+        console.error('d-l10n-annotation-mode not found')
+        return
+    }
+
+    const currentPreferredTranslation = getPreferredTranslation()
+    translationModeBox.value = currentPreferredTranslation
+
+    const currentPreferredAnnotation = getPreferredAnnotation()
+    annotationModeBox.value = currentPreferredAnnotation
+
+    translationModeBox.addEventListener('change', (event) => {
+        changePreferredTranslation(event.target.value)
+        processTranslationBoxes()
+    })
+
+    annotationModeBox.addEventListener('change', (event) => {
+        changePreferredAnnotation(event.target.value)
+        processTranslationBoxes()
+    })
+}
+
 function processColorBoxes() {
-    const allColorBoxes = document.querySelectorAll(".d-l10n-color");
+    const allColorBoxes = document.querySelectorAll(".d-l10n-color")
 
     const knownColors = {}
 
@@ -46,22 +77,22 @@ function processColorBoxes() {
         const key = colorBox.innerHTML
         const value = colorBox.getAttribute('data-color')
         if (value == null || value.length < 1) {
-            return;
+            return
         }
 
         knownColors[key] = value
-    });
+    })
 
     // second pass: add a little box with the color
     allColorBoxes.forEach((colorBox) => {
         const key = colorBox.innerHTML
         const value = knownColors[key]
         if (value == null || value.length < 1) {
-            return;
+            return
         }
 
         colorBox.innerHTML = `<span class="d-l10n-color-box" style="background-color: ${value}" title="${value}"></span> ${key}`
-    });
+    })
 }
 
 function getPreferredTranslation() {
@@ -69,7 +100,7 @@ function getPreferredTranslation() {
         return localStorage.getItem("d-l10n-preferred-translation") || 'writer'
     }
 
-    return 'writer';
+    return 'writer'
 }
 
 function changePreferredTranslation(mode) {
@@ -83,8 +114,48 @@ function changePreferredTranslation(mode) {
     }
 }
 
+function getPreferredAnnotation() {
+    if (localStorage) {
+        return localStorage.getItem("d-l10n-preferred-annotation") || 'hide'
+    }
+
+    return 'hide'
+}
+
+function changePreferredAnnotation(mode) {
+    // can be 'none', 'parenthesis', 'ruby'
+    if (mode !== 'hide' && mode !== 'parenthesis' && mode !== 'ruby') {
+        mode = 'hide'
+    }
+
+    if (localStorage) {
+        localStorage.setItem("d-l10n-preferred-annotation", mode)
+    }
+}
+
+function processInlineAnnotation(box, processedString) {
+    const original = box.getAttribute('data-original')
+
+    return `${processedString} <span class="d-l10n-translated-inline-annotation">(${original})</span>&#32;`
+}
+
+function processRubyAnnotation(box, processedString) {
+    const original = box.getAttribute('data-original')
+
+    return `<ruby>${processedString}<rp>(</rp><rt>${original}</rt><rp>)</rp></ruby>`
+}
+
 function processTranslationBoxes() {
-    const boxes = document.querySelectorAll(".d-l10n-translate-template");
+    const boxes = document.querySelectorAll(".d-l10n-translate-template")
+    if (boxes.length < 1) {
+        // no translation needed, hide the controls
+        const controlBox = document.querySelector('.d-l10n-control-box')
+        if (controlBox) {
+            controlBox.style.display = 'none'
+        }
+
+        return
+    }
 
     const knownTranslations = {}
 
@@ -102,7 +173,7 @@ function processTranslationBoxes() {
         const isUntranslatable = box.getAttribute('data-untranslatable') === 'true'
 
         if (originalValue == null || originalValue.length < 1) {
-            return;
+            return
         }
 
         knownTranslations[key] = {
@@ -115,9 +186,10 @@ function processTranslationBoxes() {
             isManuscript: isManuscript,
             isUntranslatable: isUntranslatable
         }
-    });
+    })
 
     const currentPreferredTranslation = getPreferredTranslation()
+    const currentPreferredAnnotation = getPreferredAnnotation()
 
     // remove already generated boxes
     const generatedBoxes = document.querySelectorAll(".d-l10n-generated")
@@ -129,13 +201,15 @@ function processTranslationBoxes() {
     boxes.forEach((box) => {
         const key = box.innerHTML
         const translation = knownTranslations[key]
+        const isRefernece = box.getAttribute('data-ref') != null
         if (translation == null) {
-            return;
+            box.insertAdjacentHTML('afterend', `<span class="d-l10n-translated-error">Missing translation for: ${key}</span>`)
+            return
         }
 
         if (translation.isUntranslatable) {
-            box.innerHTML = `<em>${translation.original}</em>`
-            return;
+            box.insertAdjacentHTML('afterend', `<span class="d-l10n-translated-untranslatable">${translation.original}</span>`)
+            return
         }
 
         let preferredTranslation
@@ -152,7 +226,7 @@ function processTranslationBoxes() {
             if (isCjkContext(preferredTranslation)) {
                 preferredTranslation = `<span class="d-l10n-translated-entity-name-cjk">${preferredTranslation}</span>`
             } else {
-                preferredTranslation = `<span class="d-l10n-translated-entity-name">${preferredTranslation}</span>`
+                preferredTranslation = `<span class="d-l10n-translated-entity-name d-l10n-translated-non-cjk">${preferredTranslation}</span>`
             }
         }
 
@@ -160,7 +234,7 @@ function processTranslationBoxes() {
             if (isCjkContext(preferredTranslation)) {
                 preferredTranslation = `<span class="d-l10n-translated-manuscript-name-cjk">${preferredTranslation}</span>`
             } else {
-                preferredTranslation = `<span class="d-l10n-translated-manuscript-name">${preferredTranslation}</span>`
+                preferredTranslation = `<i class="d-l10n-translated-manuscript-name d-l10n-translated-non-cjk">${preferredTranslation}</i>`
             }
         }
 
@@ -168,15 +242,26 @@ function processTranslationBoxes() {
             preferredTranslation = `<ruby>${preferredTranslation}<rt>${translation.ruby}</rt></ruby>`
         }
 
-        if (currentPreferredTranslation === 'original') {
-            box.insertAdjacentHTML('afterend', `<span class="d-l10n-generated d-l10n-translated-original">${translation.original}</span>`)
+        if (isRefernece || currentPreferredTranslation === 'original') {
+            box.insertAdjacentHTML('afterend', `<span class="d-l10n-generated d-l10n-translated-reference">${preferredTranslation}</span>`)
         } else {
+            if (currentPreferredAnnotation === 'parenthesis') {
+                preferredTranslation = processInlineAnnotation(box, preferredTranslation)
+            }
+
+            if (currentPreferredAnnotation === 'ruby') {
+                preferredTranslation = processRubyAnnotation(box, preferredTranslation)
+            }
+
             box.insertAdjacentHTML('afterend', `<span class="d-l10n-generated d-l10n-translated" title="${translation.original}">${preferredTranslation}</span>`)
         }
+
+        box.style.display = 'none'
     })
 }
 
 window.addEventListener("load", () => {
+    setupControls()
     processColorBoxes()
     processTranslationBoxes()
-});
+})
