@@ -1,3 +1,44 @@
+const controlHtml = `
+        <div class="d-l10n-control-box">
+        <div class="d-l10n-control-box-item">
+            <label for="d-l10n-translation-mode" class="d-l10n-control-box-item-label">翻译模式</label>
+            <select id="d-l10n-translation-mode">
+            <option value="writer">使用作者翻译</option>
+            <option value="canonical">使用共识性翻译</option>
+            <option value="original">显示原文</option>
+            </select>
+        </div>
+        <span class="d-l10n-control-box-vertical-divider"></span>
+        <div class="d-l10n-control-box-item">
+            <label for="d-l10n-annotation-mode" class="d-l10n-control-box-item-label">注释模式</label>
+            <select id="d-l10n-annotation-mode">
+            <option value="hide">不显示</option>
+            <option value="parenthesis">括号内显示原文</option>
+            <option value="ruby">注音形式显示原文</option>
+            </select>
+        </div>
+        </div>`
+const controlHtmlEn = `
+        <div class="d-l10n-control-box">
+        <div class="d-l10n-control-box-item">
+            <label for="d-l10n-translation-mode" class="d-l10n-control-box-item-label">Translation Mode</label>
+            <select id="d-l10n-translation-mode">
+            <option value="writer">Use Writer's Translation</option>
+            <option value="canonical">Use Canonical Translation</option>
+            <option value="original">Show Original</option>
+            </select>
+        </div>
+        <span class="d-l10n-control-box-vertical-divider"></span>
+        <div class="d-l10n-control-box-item">
+            <label for="d-l10n-annotation-mode" class="d-l10n-control-box-item-label">Annotation Mode</label>
+            <select id="d-l10n-annotation-mode">
+            <option value="hide">Hide</option>
+            <option value="parenthesis">Append Original in Parentheses</option>
+            <option value="ruby">Show Original in Ruby</option>
+            </select>
+        </div>
+        </div>`
+
 function isCjkContext(str) {
     // since js regex does not support 5-digit hex unicode
     // we will have to check for the range ourselves
@@ -37,6 +78,17 @@ function isCjkContext(str) {
 }
 
 function setupControls() {
+    const articleBody = document.querySelector('article')
+    if (articleBody == null) {
+        return;
+    }
+
+    if (document.documentElement.lang.startsWith('zh')) {
+        articleBody.insertAdjacentHTML('beforebegin', controlHtml)
+    } else {
+        articleBody.insertAdjacentHTML('beforebegin', controlHtmlEn)
+    }
+
     const translationModeBox = document.getElementById('d-l10n-translation-mode')
     const annotationModeBox = document.getElementById('d-l10n-annotation-mode')
 
