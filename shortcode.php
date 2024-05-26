@@ -5,7 +5,7 @@
  * Plugin Name: Daniel's Localization Tool
  * Plugin URI: https://git.dsstudio.com/dousha/wp-l10n-tool
  * Description: A Simple Localization Tool
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: dousha
  * Author URI: https://dsstudio.tech/
  * License: MIT
@@ -23,8 +23,8 @@ function d_l10n_add_shortcodes(): void
 
 function d_l10n_enque_assets(): void
 {
-    wp_enqueue_style('d-kbd-ctrl-style', plugins_url('/assets/css/style.css', __FILE__), [], '0.0.1');
-    wp_enqueue_script('d-kbd-ctrl-script', plugins_url('/assets/js/work.js', __FILE__), [], '0.0.1');
+    wp_enqueue_style('d-l10n-translate-style', plugins_url('/assets/css/style.css', __FILE__), [], '0.1.1');
+    wp_enqueue_script('d-l10n-translate-script', plugins_url('/assets/js/work.js', __FILE__), [], '0.1.1');
 }
 
 function d_l10n_evaluate_truthiness($val): bool
