@@ -1,10 +1,12 @@
 .d-l10n-translate-template {
-    display: none;
+    color: gainsboro;
 }
 
 .d-l10n-translated {
     text-decoration: underline dotted;
-    cursor: pointer;
+}
+
+.d-l10n-translated-reference {
 }
 
 .d-l10n-translated-entity-name {
@@ -27,11 +29,11 @@
     font-style: italic;
 }
 
-.d-l10n-translated-original:before {
+.d-l10n-translated-non-cjk:before {
     content: ' '
 }
 
-.d-l10n-translated-original:after {
+.d-l10n-translated-non-cjk:after {
     content: ' '
 }
 
@@ -57,7 +59,6 @@
 
 .d-l10n-control-box-item {
     display: inline-flex;
-    margin-right: 1rem;
     flex-flow: row;
     align-items: center;
 }
@@ -65,4 +66,14 @@
 .d-l10n-control-box-item-label {
     display: block;
     margin-right: 0.5rem;
+}
+
+.d-l10n-control-box-vertical-divider {
+    border-left: 1px solid gray;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.d-l10n-translated-error {
+    color: red;
 }

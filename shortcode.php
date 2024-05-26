@@ -143,51 +143,54 @@ function d_l10n_color_shortcode($attr = array(), $content = null, $tag = ''): ?s
     return '<span class="d-l10n-color" data-color="' . $color . '">' . $content . '</span>';
 }
 
-function d_l10n_add_translation_controls($content) {
+function d_l10n_add_translation_controls($content): string
+{
     $controlHtml = <<<HTML
         <div class="d-l10n-control-box">
         <div class="d-l10n-control-box-item">
-            <label for="d-l10n-translation-mode">翻译模式</label>
+            <label for="d-l10n-translation-mode" class="d-l10n-control-box-item-label">翻译模式</label>
             <select id="d-l10n-translation-mode">
             <option value="writer">使用作者翻译</option>
             <option value="canonical">使用共识性翻译</option>
             <option value="original">显示原文</option>
             </select>
         </div>
+        <span class="d-l10n-control-box-vertical-divider"></span>
         <div class="d-l10n-control-box-item">
-            <label for="d-l10n-annotation-mode">注释模式</label>
+            <label for="d-l10n-annotation-mode" class="d-l10n-control-box-item-label">注释模式</label>
             <select id="d-l10n-annotation-mode">
             <option value="hide">不显示</option>
-            <option value="appending">括号内显示原文</option>
+            <option value="parenthesis">括号内显示原文</option>
             <option value="ruby">注音形式显示原文</option>
             </select>
         </div>
         </div>
-    HTML
+    HTML;
 
     $controlHtmlEn = <<<HTML
         <div class="d-l10n-control-box">
         <div class="d-l10n-control-box-item">
-            <label for="d-l10n-translation-mode">Translation Mode</label>
+            <label for="d-l10n-translation-mode" class="d-l10n-control-box-item-label">Translation Mode</label>
             <select id="d-l10n-translation-mode">
             <option value="writer">Use Writer's Translation</option>
             <option value="canonical">Use Canonical Translation</option>
             <option value="original">Show Original</option>
             </select>
         </div>
+        <span class="d-l10n-control-box-vertical-divider"></span>
         <div class="d-l10n-control-box-item">
-            <label for="d-l10n-annotation-mode">Annotation Mode</label>
+            <label for="d-l10n-annotation-mode" class="d-l10n-control-box-item-label">Annotation Mode</label>
             <select id="d-l10n-annotation-mode">
             <option value="hide">Hide</option>
-            <option value="appending">Append Original in Parentheses</option>
+            <option value="parenthesis">Append Original in Parentheses</option>
             <option value="ruby">Show Original in Ruby</option>
             </select>
         </div>
         </div>
-    HTML
+    HTML;
 
     $lang = get_bloginfo('language');
-    if (strpos($lang, 'zh') !== false) {
+    if (str_contains($lang, 'zh')) {
         $content = $controlHtml . $content;
     } else {
         $content = $controlHtmlEn . $content;
